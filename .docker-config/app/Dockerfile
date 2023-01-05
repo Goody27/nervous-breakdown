@@ -12,4 +12,4 @@ RUN apt-get update && apt-get install -y \
 RUN mix do \
     local.hex --force, \
     local.rebar --force, \
-    archive.install --force hex phx_new
+    archive.install --force hex phx_new 1.6.15
