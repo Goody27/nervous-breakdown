@@ -7,6 +7,10 @@ cd nervous-breakdown
 ```
 docker compose run --rm app mix --version
 ```
+# deps.get
+```
+docker compose run --rm app mix deps.get
+```
  # スタート
  ```
  docker compose up -d
