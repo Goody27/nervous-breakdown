@@ -16,7 +16,8 @@ config :nervous_breakdown, NervousBreakdownWeb.Endpoint,
   secret_key_base: "HkCRxie+ZdlcfWOVOSc9Ec6c8rwrmkX+yS97a5ThVftWJZ3wlVofFcNMWTpm5pTv",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support
