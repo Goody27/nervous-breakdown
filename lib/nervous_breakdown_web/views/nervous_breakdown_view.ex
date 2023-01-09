@@ -29,15 +29,15 @@ defmodule NervousBreakdownWeb.NervousBreakdownView do
   end
 
   def mount(_params, _session, socket) do
-    IO.inspect("-----------------------------------------------------")
+    IO.puts("------------------------------------------")
     field = Field.create_inital_field(12)
     {:ok, assign(socket, field: field)}
   end
 
   def handle_event("clicked", %{"pos" => string_pos}, socket) do
-    IO.inspect("======================================================")
+    IO.puts("==============================================")
     pos = String.to_integer(string_pos)
-    {:noreply, update(socket, :field, &Field.open(&1, pos))}
+    {:noreply, update(socket, :field, &Field.check_and_do(&1, pos))}
   end
 
   def style_string(field) do
@@ -64,8 +64,8 @@ defmodule NervousBreakdownWeb.NervousBreakdownView do
       elem(field.cards, index)
       |> elem(0)
     cond do
-      card == :match -> Integer.to_string(cards)
-      card == :is_match? -> Integer.to_string(cards)
+      card == :match -> "match"#Integer.to_string(cards)
+      card == :is_match? -> "is_match"#Integer.to_string(cards)
       true -> ""
     end
   end
