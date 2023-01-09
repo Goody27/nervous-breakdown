@@ -48,7 +48,7 @@ defmodule NervousBreakdown.Field do
 
   def case_2_do(field, match_value) do
     index = Enum.find_index(Tuple.to_list(field.cards), fn x -> x == match_value end)
-    mode_change(field, index)
+    mode_change(:match, field, index)
   end
   def case_2_do(field) do
     is_match = case_2_check_match?(field)
@@ -59,7 +59,7 @@ defmodule NervousBreakdown.Field do
     if is_match do
       IO.puts "*****************************************************"
       index = Enum.find_index(Tuple.to_list(field.cards), fn x -> x == match_value end)
-      mode_change(field, index)
+      mode_change(:match, field, index)
       |> case_2_do(match_value)
     else
       #ここにnomatchも変更する値を
@@ -92,7 +92,7 @@ defmodule NervousBreakdown.Field do
     |> Enum.filter(fn tuple -> elem(tuple, 1) == :match end)
     |> length()
   end
-  def mode_change(field = %__MODULE__{}, index) do
+  def mode_change(:match, field = %__MODULE__{}, index) do
     Map.put(field, :cards,
       put_elem(
         field.cards,
@@ -107,6 +107,20 @@ defmodule NervousBreakdown.Field do
     )
   end
 
+  def mode_change(:nomatch, field = %__MODULE__{}, index) do
+    Map.put(field, :cards,
+      put_elem(
+        field.cards,
+        index,
+        case current_value = get_cards_atom(field, index) do
+          #　ここでis_matchがmatchにしかならないからnomatchにもしなければならないんこ
+          :nomatch -> {get_cards_num(field, index), :is_match?}
+          :is_match? -> {get_cards_num(field, index), :nomatch}
+          _ -> current_value
+        end
+      )
+    )
+  end
   def get_cards_atom(field = %__MODULE__{}, index) do
     elem(field.cards, index) |> elem(1)
   end
