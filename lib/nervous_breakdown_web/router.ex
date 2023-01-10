@@ -17,7 +17,7 @@ defmodule NervousBreakdownWeb.Router do
   scope "/", NervousBreakdownWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", NervousBreakdownView
   end
 
   # Other scopes may use custom stacks.
