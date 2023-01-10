@@ -5,40 +5,40 @@ defmodule NervousBreakdownWeb.NervousBreakdownView do
 
   def render(assigns) do
     ~H"""
-    <div class="centering_parent">
-      <div class="grid grid-cols-1 gap-4 place-content-center">
       <div class="centering_item" id='map' style={style_string(@field)}>
         <%= for {index, class_string, value} <- create_elements(@field) do%>
-          <div class="torima" phx-click="clicked" id={"field"} phx-value-pos={index}>
-          <%= value %>
+          <div class={class_string} phx-click="clicked" id={"field"} phx-value-pos={index}>
+            <%= value %>
           </div>
-          <div class={class_string}></div>
+        <% end %>
+        <button class="new_game_item" phx-click="next_open" id="bt-next">Next</button>
+        <%= if @field.clear do %>
+          <button class="new_game_item" phx-click="new_game" id="bt-new-game">New Game</button>
         <% end %>
       </div>
-        <div draggable="true" id="dragtest" class="draggable centering_item cell flag" id='map' style="
-        display: grid;
-        width: 40px;
-        height: 40px;">
-        </div>
-
-      </div>
-    </div>
-    Hello
-
     """
   end
 
   def mount(_params, _session, socket) do
-    IO.puts("------------------------------------------")
     field = Field.create_inital_field(12)
     {:ok, assign(socket, field: field)}
   end
 
   def handle_event("clicked", %{"pos" => string_pos}, socket) do
-    IO.puts("==============================================")
     pos = String.to_integer(string_pos)
-    {:noreply, update(socket, :field, &Field.check_and_do(&1, pos))}
+    {:noreply, update(socket, :field, &Field.update_field(&1, pos))}
   end
+
+  def handle_event("next_open", _, socket) do
+    {:noreply, update(socket, :field, &Field.next_step_do(&1))}
+  end
+
+  def handle_event("new_game", _, socket) do
+    field = socket.assigns.field
+    field = Field.create_inital_field(field.kinds)
+    {:noreply, update(socket, :field, fn _ -> field end)}
+  end
+
 
   def style_string(field) do
     px = 80
@@ -52,20 +52,34 @@ defmodule NervousBreakdownWeb.NervousBreakdownView do
 
   def create_elements(field) do
     for index <- 0..(field.kinds*2-1) do
-      {index, "hello", get_value_string(field, index)}
+      {index, get_class_string(field, index), get_value_string(field, index)}
     end
+  end
+
+  def get_class_string(field, index) do
+    card = elem(field.cards, index)
+    (["field"]
+    ++
+    (if field.clear, do: ["clear"], else: [])
+    ++
+    (if elem(card, 1) == :nomatch, do: ["nomatch"], else: [])
+    ++
+    (if elem(card, 1) == :is_match?,do: ["is_match"], else: [])
+    ++
+    (if elem(card, 1) == :match, do: ["match"], else: []))
+    |> Enum.join(" ")
   end
 
   def get_value_string(field, index) do
     card =
       elem(field.cards, index)
       |> elem(1)
-      cards =
+    cards =
       elem(field.cards, index)
       |> elem(0)
     cond do
-      card == :match -> "match"#Integer.to_string(cards)
-      card == :is_match? -> "is_match"#Integer.to_string(cards)
+      card == :match -> Integer.to_string(cards)
+      card == :is_match? -> Integer.to_string(cards)
       true -> ""
     end
   end

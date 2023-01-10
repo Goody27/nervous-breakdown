@@ -7,10 +7,46 @@
     right:  0;                   /* 位置指定 */
     margin:  auto;               /* 中央寄せ */
  }
- .torima {
+ .nomatch {
     margin: auto;
     padding: auto;
     width: 50px;
-    height: 50px;
-    background: rgb(200, 43, 43);
+    height: 70px;
+    background: rgb(0, 0, 0);
+    text-align: center;
+    font-size: 1.5em;
+ }
+
+ .is_match {
+   margin: auto;
+   padding: auto;
+   width: 50px;
+   height: 70px;
+   background: rgb(255, 255, 255);
+   text-align: center;
+    font-size: 1.5em;
+ }
+
+
+.match {
+   margin: auto;
+   padding: auto;
+   width: 50px;
+   height: 70px;
+   background: rgb(168, 48, 48);
+   text-align: center;
+   font-size: 1.5em;
+ }
+
+ .new_game_item {
+   background-color: rgb(241, 39, 16);
+   width: 150px;
+   height: 70px;
+ }
+ #bt-next {
+   margin: 100%;
+ }
+
+ #bt-new-game {
+   margin: 200%;
  }
