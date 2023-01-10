@@ -26,8 +26,16 @@ defmodule NervousBreakdown.Field do
   end
 
   def check_and_do(field = %__MODULE__{}, index) do
+    len_is_match = len_is_match?(field)
     cond do
-     can_open?(field, index) -> mode_change(field, index) |> pair_check()
+      can_open?(field, index) ->
+        case len_is_match do
+          0 -> mode_change(:nomatch, field, index)
+          1 -> mode_change(:nomatch, field, index)
+          2 -> case_2_do(field)
+                mode_change(:nomatch, case_2_do(field) , index)
+          _ -> field
+        end
       true -> field
     end
   end
@@ -38,12 +46,18 @@ defmodule NervousBreakdown.Field do
 
   def pair_check(field) do
     len_is_match = len_is_match?(field)
+    IO.inspect(len_is_match)
     case len_is_match do
       0 -> field
       1 -> field
       2 -> case_2_do(field)
       _ -> field
     end
+  end
+
+  def case_test_do(field) do
+    index = Enum.find_index(Tuple.to_list(field.cards), fn x -> elem(x, 1) == :is_match? end)
+    mode_change(:nomatch, field, index)
   end
 
   def case_2_do(field, match_value) do
@@ -57,12 +71,15 @@ defmodule NervousBreakdown.Field do
       |> Tuple.to_list()
       |> hd()
     if is_match do
-      IO.puts "*****************************************************"
+      IO.puts("truewwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
       index = Enum.find_index(Tuple.to_list(field.cards), fn x -> x == match_value end)
       mode_change(:match, field, index)
       |> case_2_do(match_value)
     else
-      #ここにnomatchも変更する値を
+      IO.puts("falseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+      index = Enum.find_index(Tuple.to_list(field.cards), fn x -> elem(x, 1) == :is_match? end)
+      mode_change(:nomatch, field, index)
+      |> case_test_do()
     end
   end
 
@@ -93,6 +110,7 @@ defmodule NervousBreakdown.Field do
     |> length()
   end
   def mode_change(:match, field = %__MODULE__{}, index) do
+    IO.inspect("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP")
     Map.put(field, :cards,
       put_elem(
         field.cards,
@@ -100,7 +118,7 @@ defmodule NervousBreakdown.Field do
         case current_value = get_cards_atom(field, index) do
           #　ここでis_matchがmatchにしかならないからnomatchにもしなければならないんこ
           :nomatch -> {get_cards_num(field, index), :is_match?}
-          :is_match? -> {get_cards_num(field, index), :match}
+          :is_match? -> {get_cards_num(field, index),:match}
           _ -> current_value
         end
       )
@@ -108,6 +126,7 @@ defmodule NervousBreakdown.Field do
   end
 
   def mode_change(:nomatch, field = %__MODULE__{}, index) do
+    IO.inspect("###########################################################")
     Map.put(field, :cards,
       put_elem(
         field.cards,
